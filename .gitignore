@@ -1,0 +1,5 @@
+node_modules/
+cardly-frontend/node_modules/
+.env
+data.sqlite
+build/
