@@ -22,4 +22,30 @@ const saveCard = (req, res) => {
   }
 };
 
-module.exports = { getMyCards, saveCard };
+const updateCard = (req, res) => {
+  try {
+    const { full_name, job_title, company, phone, email, website } = req.body;
+    const { color_primary, color_secondary } = req.body;
+    const result = db.prepare(`
+      UPDATE cards SET full_name=?, job_title=?, company=?, phone=?, email=?, website=?, color_primary=?, color_secondary=?
+      WHERE id=? AND user_id=?
+    `).run(full_name, job_title, company, phone, email, website, color_primary || '#1a1a2e', color_secondary || '#6c63ff', Number(req.params.id), req.user.userId);
+    if (result.changes === 0) return res.status(404).json({ error: 'Card not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+const deleteCard = (req, res) => {
+  try {
+    const result = db.prepare('DELETE FROM cards WHERE id=? AND user_id=?')
+      .run(Number(req.params.id), req.user.userId);
+    if (result.changes === 0) return res.status(404).json({ error: 'Card not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+module.exports = { getMyCards, saveCard, updateCard, deleteCard };

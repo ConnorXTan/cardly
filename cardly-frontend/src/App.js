@@ -9,14 +9,17 @@ const PrivateRoute = ({ children }) => {
   return token ? children : <Navigate to="/" />;
 };
 
+const PublicOnlyRoute = ({ children }) => {
+  const { token } = useAuth();
+  return token ? <Navigate to="/dashboard" /> : children;
+};
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={
-          <PrivateRoute><Dashboard /></PrivateRoute>
-        } />
+        <Route path="/" element={<PublicOnlyRoute><Home /></PublicOnlyRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   );
